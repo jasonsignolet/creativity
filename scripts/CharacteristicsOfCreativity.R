@@ -8,6 +8,8 @@
 library(data.table)
 library(ggplot2)
 library(magrittr)
+library(wordcloud)
+
 
 characteristics <- fread("data/characteristics_of_creativity.csv", colClasses = list(character = "RespondentID"))
 
