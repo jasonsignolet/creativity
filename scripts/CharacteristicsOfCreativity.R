@@ -38,3 +38,8 @@ plot_characteristics <- char_sums %>%
   setnames(c("characteristic", "frequency"))
 
 ggplot(plot_characteristics, aes(reorder(characteristic, frequency), frequency)) + geom_bar(stat = "identity") + coord_flip()
+
+# wordcloud
+
+wordcloud(plot_characteristics$characteristic %>% gsub("_", " ", .), plot_characteristics$frequency %>% sqrt %>% ceiling, scale = c(3, 0.1))
+
