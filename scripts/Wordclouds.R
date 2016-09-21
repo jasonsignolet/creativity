@@ -8,6 +8,7 @@
 library(data.table)
 library(ggplot2)
 library(magrittr)
+library(tm)
 library(wordcloud)
 
 
@@ -28,7 +29,7 @@ for(i in seq_along(bag_of_words)) {
   bag_of_words[i] <- gsub("thinks", "think", bag_of_words[i])
   bag_of_words[i] <- gsub("thinkgs", "think", bag_of_words[i])
   bag_of_words[i] <- gsub("thinking", "think", bag_of_words[i])
-  bag_of_words[i] <- gsub("persistence", "persistent", bag_of_words[i])
+  bag_of_words[i] <- gsub("ence", "ent", bag_of_words[i])
 }
 
 
