@@ -82,7 +82,7 @@ synth_wt <- 1 / (2 * nrow(synth))
 registerDoParallel(8)
 rf <-
   foreach(i = 1:8,
-          .combine = combine,
+          .combine = randomForest::combine,
           .multicombine = TRUE,
           .packages = 'randomForest') %dopar% {
             randomForest(x, y,
@@ -140,17 +140,17 @@ variable_order <- rf_imp[order(importance, decreasing = TRUE), variable]
 
 # prepare data for heatmap
 
-dt_with_clusters <- plot_pam_clusters[dt[, c("id", features), with = F]]
+dt_with_clusters <- plot_pam_clusters[dt]
 for(col in features) {
   set(dt_with_clusters, j = col, value = rescale(dt_with_clusters[[col]]))
 }
-dt_with_clusters.m <- melt(dt_with_clusters, id.vars = c("id", "cluster", "mds1", "mds2"))
+dt_with_clusters.m <- melt(dt_with_clusters, measure.vars = features)
 
 dt_with_clusters.m[, variable := factor(variable, levels = variable_order)]
 
 # plot heatmap
 
-p3 <- ggplot(dt_with_clusters.m, aes(variable, reorder(id, mds1))) +
+p3 <- ggplot(dt_with_clusters.m, aes(variable, reorder(id, mds2))) +
   geom_tile(aes(fill = value), colour = "white") +
   scale_fill_gradient(low = "black", high = "white") +
   theme(axis.text.x  = element_text(angle=90, hjust = 1, vjust = 0.5))
@@ -158,3 +158,7 @@ p3 <- ggplot(dt_with_clusters.m, aes(variable, reorder(id, mds1))) +
 p1
 p2
 p3
+
+
+ggplot(dt_with_clusters.m, aes(mds1, mds2, colour = factor(school.secondary))) + geom_point()
+ggplot(dt_with_clusters.m[variable == "courses_on_creativity"], aes(mds1, mds2, colour = value)) + geom_point()
