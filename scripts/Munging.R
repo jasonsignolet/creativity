@@ -40,7 +40,7 @@ ohe <- function(dt, col, max_ohe = 20, clear_col = T) {
 
 
 # call in data and rename columns
-dt <- fread("data/Creativity_Questionnaire_Results.csv", colClasses = list(character = 1))
+dt <- fread("data/export_from_surveymonkey.csv", colClasses = list(character = 1))
 new_col_names <- fread("data/new_col_names.csv")
 setnames(dt, new_col_names$newname)
 str(dt)
@@ -120,6 +120,9 @@ cols_with_regularity <- names(dt)[c(grep("methods.", names(dt)),
 cols_with_likelihood <- names(dt)[grep("creativity.", names(dt))]
 
 cols_with_agreement <- names(dt)[c(grep("statement.", names(dt)),
+                                   grep("conceptionofcreativity.", names(dt)),
+                                   grep("difficulty.", names(dt)),
+                                   grep("explicitmethods.", names(dt)),
                                    grep("knowledge.", names(dt)))]
 
 cols_with_creative_rating <- "self_rating_creativity"

@@ -44,8 +44,19 @@ majority <- function(x, max_levels = 100) {
 # load in cleaned data
 
 dt <- fread("data/clean_data_(rows_removed).csv", colClasses = list(character = "id"))
-features <- names(dt)[-1]
-features <- features[-c(grep("yeargroup.", features), grep("school.", features))]
+#features <- names(dt)[-1]
+#features <- features[-c(grep("yeargroup.", features), grep("school.", features))]
+
+categories <- c("methods", "plan", "risk", "ideas", "statement", "knowledge", "conceptionofcreativity", "difficulty", "explicitmethod")
+
+features <- foreach(i = categories, .combine = c) %do% {
+
+  search_string <- paste0("^", i, ".")
+
+  colnames(dt)[grep(i, colnames(dt))]
+}
+
+features <- c(features, "self_rating_creativity")
 
 # assign all NAs to the majority class
 
@@ -66,9 +77,9 @@ synth <-
   }
 
 # check to see if cols have been decoupled
-p_age_exp_r <- ggplot(dt, aes(age, years_experience)) + geom_point() + ggtitle("Real")# strong correlation
-p_age_exp_s <- ggplot(synth, aes(age, years_experience)) + geom_point() + ggtitle("Synthetic") # no correlation
-p1 <- grid.arrange(p_age_exp_r, p_age_exp_s, ncol = 2)
+# p_age_exp_r <- ggplot(dt, aes(age, years_experience)) + geom_point() + ggtitle("Real")# strong correlation
+# p_age_exp_s <- ggplot(synth, aes(age, years_experience)) + geom_point() + ggtitle("Synthetic") # no correlation
+# p1 <- grid.arrange(p_age_exp_r, p_age_exp_s, ncol = 2)
 
 # make training table
 
@@ -155,10 +166,26 @@ p3 <- ggplot(dt_with_clusters.m, aes(variable, reorder(id, mds2))) +
   scale_fill_gradient(low = "black", high = "white") +
   theme(axis.text.x  = element_text(angle=90, hjust = 1, vjust = 0.5))
 
-p1
+#p1
 p2
 p3
 
 
 ggplot(dt_with_clusters.m, aes(mds1, mds2, colour = factor(school.secondary))) + geom_point()
 ggplot(dt_with_clusters.m[variable == "courses_on_creativity"], aes(mds1, mds2, colour = value)) + geom_point()
+
+
+# colour plots
+
+setkey(dt, id)
+#with R data.tables, you can treat the session as if it is a database (i.e. you can do things like joining tables based on an index).
+#The setkey() allows you to set the index. merge() lets you join the tables.
+#In this case, we only wanted to join age, years of experience and the school type.
+
+plot_colours <- merge(dt[], plot_pam_clusters)
+
+
+ggplot(plot_colours, aes(x = mds1, y = mds2, colour = knowledge.i_can_facilitate_creativity)) + geom_point(size = 4)
+
+
+
