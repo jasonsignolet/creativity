@@ -61,6 +61,11 @@ dt[, `:=`(
   comments_free = NULL
   )]
 
+# Drop "delete." columns
+dt[, grep("^delete.", names(dt)) := NULL, with = F]
+
+dt[,  grep(".repeating_does_not_help", names(dt)) := NULL, with = F]
+
 
 # change applicable columns into boolean
 
@@ -108,8 +113,8 @@ agreement <- data.table(
   key = "code")
 
 creativity_rating <- data.table(
-  code = c("Not creative at all", "Somewhat creative", "Average creativity", "Quite creative", "Highly creative"),
-  score = 1:5,
+  code = c("Not creative at all", "Somewhat creative", "Quite creative", "Highly creative"),
+  score = 1:4,
   key = "code")
 
 cols_with_regularity <- names(dt)[c(grep("methods.", names(dt)),
@@ -119,8 +124,7 @@ cols_with_regularity <- names(dt)[c(grep("methods.", names(dt)),
 
 cols_with_likelihood <- names(dt)[grep("creativity.", names(dt))]
 
-cols_with_agreement <- names(dt)[c(grep("statement.", names(dt)),
-                                   grep("conceptionofcreativity.", names(dt)),
+cols_with_agreement <- names(dt)[c(grep("conceptionofcreativity.", names(dt)),
                                    grep("difficulty.", names(dt)),
                                    grep("explicitmethods.", names(dt)),
                                    grep("knowledge.", names(dt)))]
@@ -149,7 +153,7 @@ for(col in cols_with_likelihood) {
 }
 
 for(col in cols_with_creative_rating) {
-  for(i in 1:5) {
+  for(i in 1:4) {
     dt[eval(as.name(col)) == creativity_rating[score == i, code],
        eval(as.name(col)) := i]
   }
